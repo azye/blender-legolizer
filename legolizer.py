@@ -17,40 +17,35 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-	"name": "Legolizer",
-	"author": "Michael Li, Alex Ye",
-	"version": (0, 0, 1),
-	"blender": (2, 7, 2),
-	"description": "Convert ",
-	"category": "3D View"}
+    "name": "Legolizer",
+    "category": "Mesh",
+}
 
 import bpy
-import bmesh
-import numpy as np
-import binvox_rw
-
-class ObjectMoveX(bpy.types.Operator):
-    """My Object Moving Script"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "object.move_x"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Move X by One"         # display name in the interface.
+    
+class Legolizer(bpy.types.Operator):
+    """Legolizer"""                    # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.legolize"      # unique identifier for buttons and menu items to reference.
+    bl_label = "Legolize"              # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
+ 
     def execute(self, context):        # execute() is called by blender when running the operator.
 
         # The original script
-        scene = context.scene
-        for obj in scene.objects:
-            obj.location.x += 1.0
+        for obj in bpy.context.selected_objects:
+            bpy.context.scene.objects.active = obj
+            bpy.ops.object.modifier_add(type='REMESH')
+            bpy.context.object.modifiers["Remesh"].mode = 'BLOCKS'
+            bpy.context.object.modifiers["Remesh"].octree_depth = 6
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Remesh")
 
         return {'FINISHED'}            # this lets blender know the operator finished successfully.
 
 def register():
-    bpy.utils.register_class(ObjectMoveX)
-
+    bpy.utils.register_class(Legolizer)
 
 def unregister():
-    bpy.utils.unregister_class(ObjectMoveX)
-
+    bpy.utils.unregister_class(Legolizer)
 
 # This allows you to run the script directly from blenders text editor
 # to test the addon without having to install it.
