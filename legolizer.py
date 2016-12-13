@@ -22,7 +22,7 @@ class DialogOperator(bpy.types.Operator):
     O_DEPTH = IntProperty(name="Octree Depth", 
         min=0, max=8, default=4)
 
-    U_VECTOR = EnumProperty(name="Enum value",
+    U_VECTOR = EnumProperty(name="Lego Direction",
         items = [
             ('-z', '-z', '-z'),
             ('+z', '+z', '+z'),
