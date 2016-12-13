@@ -55,7 +55,6 @@ class DialogOperator(bpy.types.Operator):
             UP_VECTOR = Vector((0.0, 0.0, -1.0))
 
         for obj in bpy.context.selected_objects:
-            # if obj.type == 'MESH':
             bpy.ops.object.mode_set(mode='OBJECT')
             context.scene.objects.active = obj
             bpy.ops.object.modifier_add(type='REMESH')
