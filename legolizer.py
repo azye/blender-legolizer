@@ -8,8 +8,6 @@ import bmesh
 from mathutils import Vector
 from bpy.props import *
 
-ROT = Vector((0.0, 0.0, 0.0))
-
 OCTREE_DEPTH = 4
 UP_VECTOR = Vector((0.0, 0.0, 1.0))
 DEF_UP_VECTOR = '+z'
@@ -18,6 +16,8 @@ class DialogOperator(bpy.types.Operator):
     bl_idname = "object.legolize"
     bl_label = "Legolize"
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+    
+    BUMP_ROTATE = Vector((0.0, 0.0, 0.0))
     
     O_DEPTH = IntProperty(name="Octree Depth", 
         min=0, max=8, default=4)
@@ -39,16 +39,16 @@ class DialogOperator(bpy.types.Operator):
        
         if vec == '+x':
             UP_VECTOR = Vector((1.0, 0.0, 0.0))
-            ROT = Vector((0.0, 1.57, 0.0))
+            self.BUMP_ROTATE = Vector((0.0, 1.57, 0.0))
         elif vec == '-x':
             UP_VECTOR = Vector((-1.0, 0.0, 0.0))
-            ROT = Vector((0.0, 1.57, 0.0))
+            self.BUMP_ROTATE = Vector((0.0, 1.57, 0.0))
         elif vec == '+y':
             UP_VECTOR = Vector((0.0, 1.0, 0.0))
-            ROT = Vector((1.57, 0.0, 0.0))
+            self.BUMP_ROTATE = Vector((1.57, 0.0, 0.0))
         elif vec == '-y':
             UP_VECTOR = Vector((0.0, -1.0, 0.0))
-            ROT = Vector((1.57, 0.0, 0.0))
+            self.BUMP_ROTATE = Vector((1.57, 0.0, 0.0))
         elif vec == '+z':
             UP_VECTOR = Vector((0.0, 0.0, 1.0))
         elif vec == '-z':
@@ -66,7 +66,7 @@ class DialogOperator(bpy.types.Operator):
                 radius = calculate_radius(obj)
                 for polygon in obj.data.polygons:
                     if polygon.normal == UP_VECTOR:
-                        bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=1.4*radius, location=polygon.center)
+                        bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=1.4*radius, location=polygon.center, rotation=self.BUMP_ROTATE)
                         bump = bpy.context.object
                         bump.parent = obj
                     
