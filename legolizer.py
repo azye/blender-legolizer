@@ -62,25 +62,11 @@ class DialogOperator(bpy.types.Operator):
                 context.object.modifiers["Remesh"].mode = 'BLOCKS'
                 context.object.modifiers["Remesh"].octree_depth = OCTREE_DEPTH
                 bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Remesh")
-                
-                # context.scene.objects.active = obj
-                # bpy.ops.object.mode_set(mode='EDIT')
-                # bm = bmesh.from_edit_mesh(obj.data)
-                # #ret = bmesh.ops.bevel(bm, geom=bm.edges, offset=0.005, segments=4, profile=0.3)
-                # for face in bm.faces[:]:
-                #     if (face.normal != UP_VECTOR) and (face.normal != UP_VECTOR * -1):
-                #         print(face.edges[:])
-                #         for edge in face.edges[:]:
-                #             print(dir(edge))
-                #             for vert in edge.verts:
-                #                 print(dir(vert))
-                        #bmesh.ops.bevel(bm, geom=face.edges, offset=0.2, profile=0.3)
-                
-                #bpy.ops.object.mode_set(mode='OBJECT')
+ 
                 radius = calculate_radius(obj)
                 for polygon in obj.data.polygons:
                     if polygon.normal == UP_VECTOR:
-                        bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=1.4*radius, location=polygon.center, rotation=ROT)
+                        bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=1.4*radius, location=polygon.center)
                         bump = bpy.context.object
                         bump.parent = obj
                     
