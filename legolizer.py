@@ -55,45 +55,45 @@ class DialogOperator(bpy.types.Operator):
             UP_VECTOR = Vector((0.0, 0.0, -1.0))
 
         for obj in bpy.context.selected_objects:
-            if obj.type == 'MESH':
-                bpy.ops.object.mode_set(mode='OBJECT')
-                context.scene.objects.active = obj
-                bpy.ops.object.modifier_add(type='REMESH')
-                context.object.modifiers["Remesh"].mode = 'BLOCKS'
-                context.object.modifiers["Remesh"].octree_depth = OCTREE_DEPTH
-                bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Remesh")
- 
-                radius = calculate_radius(obj)
-                for polygon in obj.data.polygons:
-                    if polygon.normal == UP_VECTOR:
-                        bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=1.4*radius, location=polygon.center)
-                        bump = bpy.context.object
-                        bump.parent = obj
-                    
-                bpy.ops.object.select_all(action='DESELECT')
-                context.scene.objects.active = obj
-                bpy.ops.object.select_grouped(type='CHILDREN_RECURSIVE')
-                obj.select = True
-                for so in context.selected_objects:
-                    if so.type != 'MESH':
-                        so.select = False
-                if len(context.selected_objects):
-                    context.scene.objects.active = context.selected_objects[0]        
-                    bpy.ops.object.join()
+            # if obj.type == 'MESH':
+            bpy.ops.object.mode_set(mode='OBJECT')
+            context.scene.objects.active = obj
+            bpy.ops.object.modifier_add(type='REMESH')
+            context.object.modifiers["Remesh"].mode = 'BLOCKS'
+            context.object.modifiers["Remesh"].octree_depth = OCTREE_DEPTH
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Remesh")
 
-                bpy.ops.object.modifier_add(type='BEVEL')
-                context.object.modifiers["Bevel"].segments = 2
-                context.object.modifiers["Bevel"].width = 0.05
-                bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Bevel")
+            radius = calculate_radius(obj)
+            for polygon in obj.data.polygons:
+                if polygon.normal == UP_VECTOR:
+                    bpy.ops.mesh.primitive_cylinder_add(radius=radius, depth=1.4*radius, location=polygon.center)
+                    bump = bpy.context.object
+                    bump.parent = obj
                 
-                bpy.ops.object.mode_set(mode='EDIT', toggle=True)
-                bpy.ops.mesh.dissolve_degenerate()
-                
-                bpy.ops.object.mode_set(mode='OBJECT')
+            bpy.ops.object.select_all(action='DESELECT')
+            context.scene.objects.active = obj
+            bpy.ops.object.select_grouped(type='CHILDREN_RECURSIVE')
+            obj.select = True
+            for so in context.selected_objects:
+                if so.type != 'MESH':
+                    so.select = False
+            if len(context.selected_objects):
+                context.scene.objects.active = context.selected_objects[0]        
+                bpy.ops.object.join()
 
-            self.report({'INFO'}, message)
-            print(message)
-            return {'FINISHED'}            # this lets blender know the operator finished successfully.
+            bpy.ops.object.modifier_add(type='BEVEL')
+            context.object.modifiers["Bevel"].segments = 2
+            context.object.modifiers["Bevel"].width = 0.05
+            bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Bevel")
+            
+            bpy.ops.object.mode_set(mode='EDIT', toggle=True)
+            bpy.ops.mesh.dissolve_degenerate()
+            
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+        self.report({'INFO'}, message)
+        print(message)
+        return {'FINISHED'}            # this lets blender know the operator finished successfully.
  
     def invoke(self, context, event):
         global OCTREE_DEPTH, DEF_UP_VECTOR
